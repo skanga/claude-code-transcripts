@@ -1183,15 +1183,21 @@ class TestMessageMacro:
     """Tests for the message macro's structural output."""
 
     def test_assistant_message_has_avatar(self):
-        result = _macros.message("assistant", "Assistant", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>")
+        result = _macros.message(
+            "assistant", "Assistant", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>"
+        )
         assert 'class="avatar"' in result
 
     def test_user_message_has_bubble(self):
-        result = _macros.message("user", "User", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>")
+        result = _macros.message(
+            "user", "User", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>"
+        )
         assert 'class="user-bubble"' in result
 
     def test_tool_reply_has_no_bubble(self):
-        result = _macros.message("tool-reply", "Tool reply", "msg-1", "2024-01-01T10:00:00", "<p>output</p>")
+        result = _macros.message(
+            "tool-reply", "Tool reply", "msg-1", "2024-01-01T10:00:00", "<p>output</p>"
+        )
         assert 'class="user-bubble"' not in result
         assert 'class="avatar"' not in result
 
@@ -1204,7 +1210,9 @@ class TestMessageMacro:
         assert "<details" in result
 
     def test_tool_use_uses_details(self):
-        result = _macros.tool_use("WebFetch", "Fetch a URL", '{"url": "https://example.com"}', "tool-1")
+        result = _macros.tool_use(
+            "WebFetch", "Fetch a URL", '{"url": "https://example.com"}', "tool-1"
+        )
         assert "<details" in result
 
 
