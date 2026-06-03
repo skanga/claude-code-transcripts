@@ -27,6 +27,7 @@ from claude_code_transcripts import (
     parse_session_file,
     get_session_summary,
     find_local_sessions,
+    _macros,
 )
 
 
@@ -1176,6 +1177,43 @@ class TestGetSessionSummary:
         summary = get_session_summary(jsonl_file, max_length=100)
         assert len(summary) <= 100
         assert summary.endswith("...")
+
+
+class TestMessageMacro:
+    """Tests for the message macro's structural output."""
+
+    def test_assistant_message_has_avatar(self):
+        result = _macros.message(
+            "assistant", "Assistant", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>"
+        )
+        assert 'class="avatar"' in result
+
+    def test_user_message_has_bubble(self):
+        result = _macros.message(
+            "user", "User", "msg-1", "2024-01-01T10:00:00", "<p>Hi</p>"
+        )
+        assert 'class="user-bubble"' in result
+
+    def test_tool_reply_has_no_bubble(self):
+        result = _macros.message(
+            "tool-reply", "Tool reply", "msg-1", "2024-01-01T10:00:00", "<p>output</p>"
+        )
+        assert 'class="user-bubble"' not in result
+        assert 'class="avatar"' not in result
+
+    def test_thinking_uses_details(self):
+        result = _macros.thinking("<p>some thought</p>")
+        assert "<details" in result
+
+    def test_bash_tool_uses_details(self):
+        result = _macros.bash_tool("pytest tests/ -v", "Run tests", "tool-1")
+        assert "<details" in result
+
+    def test_tool_use_uses_details(self):
+        result = _macros.tool_use(
+            "WebFetch", "Fetch a URL", '{"url": "https://example.com"}', "tool-1"
+        )
+        assert "<details" in result
 
 
 class TestFindLocalSessions:
